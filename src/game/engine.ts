@@ -65,6 +65,7 @@ export class Engine {
     this.running = true;
     this.last = performance.now();
     this.audio.startMusic(this.sim.level.theme === "night");
+    void this.lockLandscape();
     const loop = (now: number) => {
       if (!this.running) return;
       const raw = Math.min(0.1, (now - this.last) / 1000);
@@ -193,6 +194,9 @@ export class Engine {
       this.audio.unlock();
       this.handlePointer(this.world(e));
     };
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.cancelable) e.preventDefault();
+    };
     const onKey = (e: KeyboardEvent) => {
       if (e.code === "Escape") {
         e.preventDefault();
@@ -221,20 +225,36 @@ export class Engine {
     this.canvas.addEventListener("pointermove", onMove);
     this.canvas.addEventListener("pointerdown", onDown);
     this.canvas.addEventListener("pointercancel", onMove);
+    this.canvas.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("keydown", onKey);
     window.addEventListener("keyup", onUp);
     window.addEventListener("blur", onBlur);
     window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
     document.addEventListener("visibilitychange", onVis);
+    window.visualViewport?.addEventListener("resize", onResize);
     this.unsubs.push(() => {
       this.canvas.removeEventListener("pointermove", onMove);
       this.canvas.removeEventListener("pointerdown", onDown);
+      this.canvas.removeEventListener("pointercancel", onMove);
+      this.canvas.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("keyup", onUp);
       window.removeEventListener("blur", onBlur);
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
       document.removeEventListener("visibilitychange", onVis);
+      window.visualViewport?.removeEventListener("resize", onResize);
     });
+  }
+
+  private async lockLandscape() {
+    try {
+      const orient = screen.orientation as ScreenOrientation & { lock?: (m: string) => Promise<void> };
+      await orient.lock?.("landscape");
+    } catch {
+      /* browsers only allow this in fullscreen / installed app */
+    }
   }
 
   private fit() {

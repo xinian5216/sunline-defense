@@ -149,7 +149,7 @@ function Title({
   onSettings: () => void;
 }) {
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-5 py-10">
+    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-5 py-10 pt-[max(2.5rem,env(safe-area-inset-top))] pb-[max(2.5rem,env(safe-area-inset-bottom))]">
       <img
         src={assetUrl("sprites/lawn_day.jpg")}
         alt=""
@@ -179,7 +179,10 @@ function Title({
             </BigBtn>
           </div>
         </div>
-        <p className="mt-8 text-xs text-faint">进度保存在本机 · 已解锁 {save.unlocked + 1} / {LEVELS.length} 关</p>
+        <p className="mt-8 text-xs text-faint">
+          进度保存在本机 · 已解锁 {save.unlocked + 1} / {LEVELS.length} 关
+        </p>
+        <p className="mt-2 text-xs text-faint sm:hidden">手机请横屏游玩，点种子会更准</p>
       </div>
     </div>
   );
@@ -274,6 +277,43 @@ function PlantSelect({
   );
 }
 
+function usePortrait() {
+  const read = () => typeof window !== "undefined" && window.innerHeight > window.innerWidth + 64;
+  const [portrait, setPortrait] = useState(read);
+  useEffect(() => {
+    const on = () => setPortrait(read());
+    window.addEventListener("resize", on);
+    window.addEventListener("orientationchange", on);
+    return () => {
+      window.removeEventListener("resize", on);
+      window.removeEventListener("orientationchange", on);
+    };
+  }, []);
+  return portrait;
+}
+
+function RotateHint({ onSkip }: { onSkip: () => void }) {
+  return (
+    <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-bg/92 px-6 text-center">
+      <div
+        className="mb-5 size-16 rounded-xl border-2 border-primary"
+        style={{ transform: "rotate(90deg)" }}
+        aria-hidden
+      />
+      <h2 className="font-display text-3xl">请把手机横过来</h2>
+      <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
+        草坪是横版的。横屏后种子栏和格子会大很多，点起来更准。
+      </p>
+      <button
+        className="mt-8 h-11 rounded-lg border border-border bg-surface px-4 text-sm text-muted"
+        onClick={onSkip}
+      >
+        仍要竖着玩
+      </button>
+    </div>
+  );
+}
+
 function SeedCard({ id, onClick, active }: { id: PlantId; onClick: () => void; active?: boolean }) {
   const p = PLANTS[id];
   return (
@@ -314,6 +354,8 @@ function Play({
   const [paused, setPaused] = useState(false);
   const [end, setEnd] = useState<"win" | "lose" | null>(null);
   const [kills, setKills] = useState(0);
+  const [allowPortrait, setAllowPortrait] = useState(false);
+  const portrait = usePortrait();
   const idx = LEVELS.findIndex((l) => l.id === level.id);
 
   useEffect(() => {
@@ -349,7 +391,7 @@ function Play({
   }, [level, seeds, sprites, survival, idx]);
 
   return (
-    <div className="flex min-h-dvh flex-col bg-bg">
+    <div className="relative flex min-h-dvh flex-col bg-bg">
       <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden" style={{ touchAction: "none" }}>
         <canvas
           ref={canvasRef}
@@ -357,9 +399,12 @@ function Play({
           style={{ imageRendering: "pixelated", touchAction: "none" }}
         />
       </div>
-      <p className="px-3 py-2 text-center text-xs text-faint">
+      <p className="hidden px-3 py-2 text-center text-xs text-faint md:block">
         点选种子再点草地种植 · 点阳光收集 · 1-8 快捷键 · X 铲子 · F 加速 · Esc 暂停
       </p>
+      {portrait && !allowPortrait && !end && (
+        <RotateHint onSkip={() => setAllowPortrait(true)} />
+      )}
       {paused && !end && (
         <Modal>
           <h2 className="font-display text-3xl">暂停</h2>

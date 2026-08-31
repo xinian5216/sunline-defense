@@ -35,6 +35,7 @@
     background: var(--color-bg);
     color: var(--color-fg);
     font-family: var(--font-sans);
+    overscroll-behavior: none;
   }
 
   body {
@@ -43,6 +44,10 @@
     min-height: 100dvh;
     background: var(--color-bg);
     color: var(--color-fg);
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   button:not(:disabled),

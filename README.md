@@ -5,9 +5,7 @@
 > Fan-made tribute inspired by *Plants vs. Zombies*. Not affiliated with EA / PopCap.
 
 **[在线游玩 Play in browser](https://xinian5216.github.io/sunline-defense/)** ·
-**[下载桌面版 Releases](https://github.com/xinian5216/sunline-defense/releases/latest)**
-
-首次打开在线版若是 404：进仓库 **Settings → Pages**，Source 选 **Deploy from a branch**，Branch 选 `gh-pages` / `/ (root)`，等一两分钟。
+**[下载 APK / 桌面版 Releases](https://github.com/xinian5216/sunline-defense/releases/latest)**
 
 ![标题画面](docs/title.png)
 
@@ -15,15 +13,17 @@
 
 | 方式 | 适合谁 | 做什么 |
 | --- | --- | --- |
-| **网页** | 所有人 | 打开 [GitHub Pages](https://xinian5216.github.io/sunline-defense/) |
-| **Windows 绿色版** | 不想装环境 | [Releases](https://github.com/xinian5216/sunline-defense/releases/latest) 下载 `SunlineDefense-Portable-*.exe`，双击即玩 |
+| **网页** | 所有人 | 打开 [GitHub Pages](https://xinian5216.github.io/sunline-defense/) ，手机请**横屏** |
+| **安卓 APK** | 安卓手机 | [Releases](https://github.com/xinian5216/sunline-defense/releases/latest) 下载 `SunlineDefense-*.apk`，允许「未知来源」后安装。游戏会锁横屏 |
+| **iPhone / iPad** | 苹果手机 | 用 Safari 打开网页 → 分享 → **添加到主屏幕**（苹果不让随便装 IPA） |
+| **Windows 绿色版** | 不想装环境 | 下载 `SunlineDefense-Portable-*.exe`，双击即玩 |
 | **Windows 安装包** | 想要开始菜单快捷方式 | 下载 `SunlineDefense-Setup-*.exe` |
-| **macOS** | Mac 用户 | 下载 `SunlineDefense-macOS-*.dmg`，拖到应用程序。若提示损坏：右键打开，或执行 `xattr -cr /Applications/阳光防线.app` |
+| **macOS** | Mac 用户 | 下载 `SunlineDefense-macOS-*.dmg`。若提示损坏：右键打开，或 `xattr -cr /Applications/阳光防线.app` |
 | **Linux** | 桌面 Linux | 下载 `.AppImage`，`chmod +x` 后运行 |
-| **离线网页包** | 有 Python / 浏览器 | Releases 里的 `SunlineDefense-web.zip`，解压后见包内说明 |
+| **离线网页包** | 有 Python / 浏览器 | `SunlineDefense-web.zip`，解压后看说明 |
 | **源码运行** | 开发者 | 见下方 |
 
-手机浏览器也能玩；可以把网页「添加到主屏幕」当小应用。
+安卓第一次打开 APK 可能被 Play 保护拦截，选「仍要安装」即可。这是爱好者签名，不是应用商店包。
 
 ## 操作
 
@@ -74,9 +74,21 @@ npm run desktop
 
 产物在 `release/`。日常开发不需要安装 Electron。
 
+本地打安卓包（需要 JDK 21 + Android SDK）：
+
+```bash
+npm install -D @capacitor/core @capacitor/cli @capacitor/android
+npm run build
+npx cap add android
+npx cap sync android
+python3 scripts/build-apk.py
+```
+
+产物是 `SunlineDefense-<version>.apk`。
+
 ## 技术
 
-纯前端：React 19 + Vite + Tailwind v4 + Canvas 2D。没有服务器、没有账号。音效用 Web Audio 合成。
+纯前端：React 19 + Vite + Tailwind v4 + Canvas 2D。没有服务器、没有账号。音效用 Web Audio 合成。安卓包用 Capacitor 把同一套网页封进系统 WebView。
 
 | 目录 | 作用 |
 | --- | --- |

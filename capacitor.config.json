@@ -1,0 +1,10 @@
+{
+  "appId": "fun.sunline.defense",
+  "appName": "阳光防线",
+  "webDir": "dist",
+  "backgroundColor": "#12180e",
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#12180e"
+  }
+}

@@ -63,9 +63,34 @@ jobs:
             release/*.zip
           if-no-files-found: error
 
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: android-actions/setup-android@v3
+      - run: npm ci
+      - run: npm install --no-save --no-package-lock @capacitor/core@7.4.3 @capacitor/cli@7.4.3 @capacitor/android@7.4.3
+      - run: npm run build
+      - run: npx cap add android
+      - run: npx cap sync android
+      - run: python3 scripts/build-apk.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: SunlineDefense-*.apk
+          if-no-files-found: error
+
   publish:
     if: github.ref_type == 'tag'
-    needs: [web, desktop]
+    needs: [web, desktop, android]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -75,7 +100,7 @@ jobs:
       - name: Flatten artifacts
         run: |
           mkdir -p out
-          find artifacts -type f \( -name '*.exe' -o -name '*.dmg' -o -name '*.AppImage' -o -name '*.zip' -o -name '*.tar.gz' \) -exec cp {} out/ \;
+          find artifacts -type f \( -name '*.exe' -o -name '*.dmg' -o -name '*.AppImage' -o -name '*.zip' -o -name '*.tar.gz' -o -name '*.apk' \) -exec cp {} out/ \;
           ls -lh out
       - uses: softprops/action-gh-release@v2
         with:
@@ -85,6 +110,7 @@ jobs:
 
             | 文件 | 平台 |
             | --- | --- |
+            | `SunlineDefense-*.apk` | **安卓安装包**，下载后打开即可装 |
             | `SunlineDefense-Portable-*.exe` | Windows 绿色版，双击即玩 |
             | `SunlineDefense-Setup-*.exe` | Windows 安装包 |
             | `SunlineDefense-macOS-*.dmg` | macOS |

@@ -10,3 +10,6 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 SunlineDefense-web.zip
+SunlineDefense-*.apk
+android/
+ios/
