@@ -1,0 +1,99 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Pack web zip
+        run: |
+          python3 scripts/pack-web.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web
+          path: SunlineDefense-web.zip
+
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            args: --win portable nsis
+          - os: macos-latest
+            args: --mac dmg
+          - os: ubuntu-latest
+            args: --linux AppImage tar.gz
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm install --no-save --no-package-lock electron@37.3.1 electron-builder@26.0.12
+      - name: Linux AppImage deps
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y rpm libfuse2 || true
+      - run: npm run build
+      - run: npx electron-builder ${{ matrix.args }} --publish never
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-${{ matrix.os }}
+          path: |
+            release/*.exe
+            release/*.dmg
+            release/*.AppImage
+            release/*.tar.gz
+            release/*.zip
+          if-no-files-found: error
+
+  publish:
+    if: github.ref_type == 'tag'
+    needs: [web, desktop]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Flatten artifacts
+        run: |
+          mkdir -p out
+          find artifacts -type f \( -name '*.exe' -o -name '*.dmg' -o -name '*.AppImage' -o -name '*.zip' -o -name '*.tar.gz' \) -exec cp {} out/ \;
+          ls -lh out
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: 阳光防线 ${{ github.ref_name }}
+          body: |
+            ## 怎么玩
+
+            | 文件 | 平台 |
+            | --- | --- |
+            | `SunlineDefense-Portable-*.exe` | Windows 绿色版，双击即玩 |
+            | `SunlineDefense-Setup-*.exe` | Windows 安装包 |
+            | `SunlineDefense-macOS-*.dmg` | macOS |
+            | `SunlineDefense-linux-*.AppImage` / `*.tar.gz` | Linux |
+            | `SunlineDefense-web.zip` | 离线网页（解压后看说明） |
+
+            在线版：https://xinian5216.github.io/sunline-defense/
+
+            macOS 若提示无法打开：右键 → 打开，或 `xattr -cr /Applications/阳光防线.app`
+          files: out/*
+          generate_release_notes: true
+          fail_on_unmatched_files: true

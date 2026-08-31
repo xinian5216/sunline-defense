@@ -1,0 +1,17 @@
+export const VW = 960;
+export const VH = 540;
+export const SEED_H = 78;
+export const HOUSE_W = 76;
+export const ROWS = 5;
+export const COLS = 9;
+export const CELL_W = 80;
+export const CELL_H = (VH - SEED_H) / ROWS;
+export const LAWN_X = HOUSE_W;
+export const LAWN_Y = SEED_H;
+export const LAWN_W = COLS * CELL_W;
+export const SIDE_W = VW - HOUSE_W - LAWN_W;
+export const STEP = 1 / 60;
+export const PEA_DMG = 20;
+export const MAX_PARTICLES = 220;
+export const SAVE_KEY = "sunline-defense-v1";
+export const SAVE_VERSION = 1;
