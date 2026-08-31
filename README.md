@@ -7,6 +7,8 @@
 **[在线游玩 Play in browser](https://xinian5216.github.io/sunline-defense/)** ·
 **[下载桌面版 Releases](https://github.com/xinian5216/sunline-defense/releases/latest)**
 
+首次打开在线版若是 404：进仓库 **Settings → Pages**，Source 选 **Deploy from a branch**，Branch 选 `gh-pages` / `/ (root)`，等一两分钟。
+
 ![标题画面](docs/title.png)
 
 ## 怎么玩
