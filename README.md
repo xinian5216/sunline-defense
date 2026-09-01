@@ -14,7 +14,7 @@
 | 方式 | 适合谁 | 做什么 |
 | --- | --- | --- |
 | **网页** | 所有人 | 打开 [GitHub Pages](https://xinian5216.github.io/sunline-defense/) ，手机请**横屏** |
-| **安卓 APK** | 安卓手机 | [Releases](https://github.com/xinian5216/sunline-defense/releases/latest) 下载 `SunlineDefense-*.apk`，允许「未知来源」后安装。游戏会锁横屏 |
+| **安卓 APK** | 安卓手机 | [Releases](https://github.com/xinian5216/sunline-defense/releases/latest) 下载 `SunlineDefense-*.apk`，允许「未知来源」后安装。菜单可竖屏，进关请横过来 |
 | **iPhone / iPad** | 苹果手机 | 用 Safari 打开网页 → 分享 → **添加到主屏幕**（苹果不让随便装 IPA） |
 | **Windows 绿色版** | 不想装环境 | 下载 `SunlineDefense-Portable-*.exe`，双击即玩 |
 | **Windows 安装包** | 想要开始菜单快捷方式 | 下载 `SunlineDefense-Setup-*.exe` |
