@@ -335,10 +335,10 @@ export const LEVELS: LevelDef[] = [
     reward: "sunflower",
     note: "点选种子，点在草地上种植。点掉落的阳光才能收集。",
     spawns: compile([
-      { t: 16, g: [["basic", 1, 0]] },
-      { t: 28, g: [["basic", 1, 0]] },
-      { t: 40, g: [["basic", 2, 4]] },
-      { t: 58, flag: true, g: [["basic", 5, 1.6]] },
+      { t: 32, g: [["basic", 1, 0]] },
+      { t: 54, g: [["basic", 1, 0]] },
+      { t: 78, g: [["basic", 2, 8]] },
+      { t: 108, flag: true, g: [["basic", 4, 3.6]] },
     ]),
   },
   {
@@ -354,10 +354,10 @@ export const LEVELS: LevelDef[] = [
     reward: "cherry",
     note: "先种日轮花，等阳光再铺射手。",
     spawns: compile([
-      { t: 22, g: [["basic", 1, 0]] },
-      { t: 34, g: [["basic", 2, 3]] },
-      { t: 48, g: [["basic", 3, 2.2]] },
-      { t: 70, flag: true, g: [["basic", 8, 1.3]] },
+      { t: 36, g: [["basic", 1, 0]] },
+      { t: 60, g: [["basic", 1, 0]] },
+      { t: 84, g: [["basic", 2, 7]] },
+      { t: 122, flag: true, g: [["basic", 5, 3.2]] },
     ]),
   },
   {
@@ -372,10 +372,10 @@ export const LEVELS: LevelDef[] = [
     reward: "wallnut",
     note: "爆炎果能瞬间清掉挤成一团的行尸。",
     spawns: compile([
-      { t: 20, g: [["basic", 2, 4]] },
-      { t: 38, g: [["basic", 4, 2]] },
-      { t: 55, g: [["basic", 3, 1.6], ["cone", 1, 0]] },
-      { t: 78, flag: true, g: [["basic", 9, 1.1], ["cone", 2, 2]] },
+      { t: 30, g: [["basic", 1, 0]] },
+      { t: 52, g: [["basic", 2, 6]] },
+      { t: 78, g: [["basic", 3, 4], ["cone", 1, 5]] },
+      { t: 112, flag: true, g: [["basic", 6, 2.6], ["cone", 1, 3.5]] },
     ]),
   },
   {
@@ -390,11 +390,11 @@ export const LEVELS: LevelDef[] = [
     reward: "potato",
     note: "把木盾果放在射手前面，给输出争取时间。",
     spawns: compile([
-      { t: 18, g: [["basic", 2, 3]] },
-      { t: 36, g: [["basic", 3, 2], ["cone", 1, 0]] },
-      { t: 58, flag: true, g: [["basic", 6, 1.2], ["cone", 2, 2]] },
-      { t: 88, g: [["basic", 4, 1.5], ["cone", 3, 2]] },
-      { t: 118, flag: true, g: [["basic", 10, 0.9], ["cone", 4, 1.4]] },
+      { t: 28, g: [["basic", 2, 6]] },
+      { t: 54, g: [["basic", 2, 4], ["cone", 1, 5]] },
+      { t: 86, flag: true, g: [["basic", 4, 2.8], ["cone", 2, 3.2]] },
+      { t: 124, g: [["basic", 3, 3.2], ["cone", 2, 3.5]] },
+      { t: 162, flag: true, g: [["basic", 7, 2.2], ["cone", 3, 2.8]] },
     ]),
   },
   {
@@ -409,11 +409,11 @@ export const LEVELS: LevelDef[] = [
     reward: "snowpea",
     note: "埋爆薯需要时间就绪，提前埋在前排。",
     spawns: compile([
-      { t: 16, g: [["basic", 3, 3]] },
-      { t: 40, g: [["cone", 2, 3], ["basic", 3, 1.8]] },
-      { t: 64, flag: true, g: [["basic", 7, 1], ["cone", 3, 1.6]] },
-      { t: 96, g: [["basic", 5, 1.4], ["cone", 3, 2]] },
-      { t: 128, flag: true, huge: true, g: [["basic", 12, 0.7], ["cone", 5, 1.1]] },
+      { t: 24, g: [["basic", 2, 5]] },
+      { t: 50, g: [["cone", 2, 4], ["basic", 2, 3]] },
+      { t: 78, flag: true, g: [["basic", 6, 1.6], ["cone", 2, 2.4]] },
+      { t: 114, g: [["basic", 4, 2], ["cone", 3, 2.6]] },
+      { t: 152, flag: true, huge: true, g: [["basic", 10, 1.1], ["cone", 4, 1.6]] },
     ]),
   },
   {
@@ -428,12 +428,12 @@ export const LEVELS: LevelDef[] = [
     reward: "repeater",
     note: "霜冻炮减速铁桶尸，给火力窗口。",
     spawns: compile([
-      { t: 18, g: [["basic", 3, 2.4]] },
-      { t: 40, g: [["cone", 3, 2], ["basic", 3, 1.6]] },
-      { t: 62, g: [["bucket", 1, 0], ["cone", 2, 2]] },
-      { t: 80, flag: true, g: [["basic", 8, 1], ["cone", 3, 1.4], ["bucket", 1, 0]] },
-      { t: 112, g: [["cone", 4, 1.6], ["bucket", 2, 3]] },
-      { t: 148, flag: true, g: [["basic", 10, 0.8], ["cone", 5, 1.2], ["bucket", 3, 2]] },
+      { t: 24, g: [["basic", 2, 4]] },
+      { t: 48, g: [["cone", 2, 3], ["basic", 2, 2.5]] },
+      { t: 72, g: [["bucket", 1, 0], ["cone", 2, 3]] },
+      { t: 96, flag: true, g: [["basic", 6, 1.5], ["cone", 3, 2], ["bucket", 1, 0]] },
+      { t: 132, g: [["cone", 3, 2.2], ["bucket", 2, 4]] },
+      { t: 170, flag: true, g: [["basic", 8, 1.2], ["cone", 4, 1.6], ["bucket", 2, 2.8]] },
     ]),
   },
   {
@@ -448,12 +448,12 @@ export const LEVELS: LevelDef[] = [
     reward: "jalapeno",
     note: "连发炮是中后期的主力输出。",
     spawns: compile([
-      { t: 16, g: [["basic", 4, 2]] },
-      { t: 38, g: [["cone", 4, 1.8], ["basic", 3, 1.4]] },
-      { t: 60, g: [["bucket", 2, 3], ["cone", 3, 1.6]] },
-      { t: 82, flag: true, g: [["basic", 8, 0.9], ["cone", 4, 1.2], ["bucket", 2, 2]] },
-      { t: 118, g: [["bucket", 3, 2.2], ["cone", 5, 1.4]] },
-      { t: 152, flag: true, huge: true, g: [["basic", 12, 0.65], ["cone", 6, 1], ["bucket", 4, 1.6]] },
+      { t: 22, g: [["basic", 3, 3]] },
+      { t: 48, g: [["cone", 3, 2.4], ["basic", 2, 2]] },
+      { t: 72, g: [["bucket", 2, 4], ["cone", 2, 2.2]] },
+      { t: 98, flag: true, g: [["basic", 6, 1.3], ["cone", 3, 1.8], ["bucket", 2, 2.6]] },
+      { t: 136, g: [["bucket", 2, 2.8], ["cone", 4, 1.8]] },
+      { t: 172, flag: true, huge: true, g: [["basic", 10, 0.9], ["cone", 5, 1.3], ["bucket", 3, 2]] },
     ]),
   },
   {
@@ -468,12 +468,12 @@ export const LEVELS: LevelDef[] = [
     reward: "puffshroom",
     note: "炎爆椒清一整行。读报尸丢了报纸会狂奔。",
     spawns: compile([
-      { t: 16, g: [["basic", 3, 2]] },
-      { t: 34, g: [["newspaper", 2, 4], ["cone", 2, 2]] },
-      { t: 56, g: [["bucket", 2, 3], ["newspaper", 2, 2.5]] },
-      { t: 78, flag: true, g: [["basic", 7, 0.9], ["cone", 3, 1.3], ["newspaper", 3, 1.8], ["bucket", 1, 0]] },
-      { t: 114, g: [["newspaper", 4, 1.6], ["bucket", 3, 2], ["cone", 4, 1.4]] },
-      { t: 150, flag: true, huge: true, g: [["basic", 10, 0.6], ["newspaper", 5, 1], ["cone", 5, 0.9], ["bucket", 4, 1.4]] },
+      { t: 22, g: [["basic", 2, 3.5]] },
+      { t: 46, g: [["newspaper", 2, 5], ["cone", 2, 3]] },
+      { t: 72, g: [["bucket", 2, 4], ["newspaper", 1, 3]] },
+      { t: 98, flag: true, g: [["basic", 5, 1.4], ["cone", 3, 2], ["newspaper", 2, 2.4], ["bucket", 1, 0]] },
+      { t: 136, g: [["newspaper", 3, 2.2], ["bucket", 2, 2.8], ["cone", 3, 2]] },
+      { t: 172, flag: true, huge: true, g: [["basic", 8, 0.9], ["newspaper", 4, 1.4], ["cone", 4, 1.3], ["bucket", 3, 1.8]] },
     ]),
   },
   {
@@ -557,7 +557,7 @@ export const LEVELS: LevelDef[] = [
 ];
 
 export function survivalWave(n: number): SpawnEvent[] {
-  const t0 = 8;
+  const t0 = 14;
   const count = 5 + n * 2;
   const gap = Math.max(0.45, 1.35 - n * 0.06);
   const bag: ZombieId[] = ["basic", "basic", "basic", "cone"];

@@ -104,7 +104,7 @@ export function createSim(level: LevelDef, seeds: PlantId[], survival = false): 
     seeds,
     kills: 0,
     nextId: 1,
-    sunTimer: 6,
+    sunTimer: 5,
     wave: 0,
     survival,
     lastFlag: -1,
@@ -398,7 +398,7 @@ export function stepSim(sim: Sim, dt: number, events: { kind: string }[]) {
   if (sim.phase === "play" && sim.level.theme === "day") {
     sim.sunTimer -= dt;
     if (sim.sunTimer <= 0) {
-      sim.sunTimer = 9 + Math.random() * 4;
+      sim.sunTimer = 7 + Math.random() * 3;
       spawnSun(sim, LAWN_X + 40 + Math.random() * (LAWN_W - 80), LAWN_Y + 40 + Math.random() * (CELL_H * ROWS - 60), 25, false);
     }
   }
