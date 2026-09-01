@@ -1,4 +1,4 @@
-import { CELL_H, CELL_W, COLS, HOUSE_W, LAWN_X, LAWN_Y, LAWN_W, MAX_PARTICLES, PEA_DMG, ROWS, SIDE_W, VW } from "./constants";
+import { CELL_H, CELL_W, COLS, HOUSE_W, LAWN_X, LAWN_Y, LAWN_W, MAX_PARTICLES, PEA_DMG, ROWS, SEED_H, SIDE_W, VW } from "./constants";
 import { PLANTS, ZOMBIES, survivalWave } from "./catalog";
 import type {
   FloatText,
@@ -139,7 +139,7 @@ function burst(sim: Sim, x: number, y: number, n: number, color: string, speed =
   }
 }
 
-function float(sim: Sim, x: number, y: number, text: string, color: string) {
+export function float(sim: Sim, x: number, y: number, text: string, color: string) {
   sim.floats.push({ x, y, vy: -28, text, life: 0.8, color });
 }
 
@@ -654,22 +654,22 @@ function tickFx(sim: Sim, dt: number) {
 }
 
 export function seedHit(x: number, y: number, n: number): number {
-  if (y > 70 || x < 108) return -1;
+  if (y < 0 || y > SEED_H + 6 || x < 96) return -1;
   const i = Math.floor((x - 108) / 72);
   if (i >= 0 && i < n) return i;
   return -1;
 }
 
 export function shovelHit(x: number, y: number) {
-  return x > VW - 86 && x < VW - 18 && y < 70;
+  return x > VW - 92 && x < VW - 12 && y < SEED_H + 6;
 }
 
 export function pauseHit(x: number, y: number) {
-  return x > VW - 170 && x < VW - 96 && y < 70;
+  return x > VW - 176 && x < VW - 92 && y < SEED_H + 6;
 }
 
 export function speedHit(x: number, y: number) {
-  return x > VW - 250 && x < VW - 176 && y < 70;
+  return x > VW - 256 && x < VW - 176 && y < SEED_H + 6;
 }
 
 export { cellX, cellY, SIDE_W, PEA_DMG };

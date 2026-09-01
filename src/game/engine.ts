@@ -1,10 +1,11 @@
-import { STEP, VH, VW } from "./constants";
-import { PLANTS } from "./catalog";
+import { COLS, ROWS, STEP, VH, VW } from "./constants";
 import { render } from "./render";
 import {
+  canPlant,
   collectSun,
   colAt,
   createSim,
+  float,
   pauseHit,
   rowAt,
   seedHit,
@@ -41,6 +42,7 @@ export class Engine {
   private ended = false;
   private keys = new Set<string>();
   private unsubs: Array<() => void> = [];
+  private press: { id: number; cx: number; cy: number } | null = null;
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -135,22 +137,20 @@ export class Engine {
     render(this.ctx, s, this.sprites, this.hover, this.time, this.speed);
   }
 
-  private world(e: { clientX: number; clientY: number }) {
+  private world(e: { clientX: number; clientY: number; pointerType?: string }) {
     const r = this.canvas.getBoundingClientRect();
+    const w = Math.max(1, r.width);
+    const h = Math.max(1, r.height);
+    const lift = e.pointerType === "touch" ? 12 : 0;
     return {
-      x: ((e.clientX - r.left) / r.width) * VW,
-      y: ((e.clientY - r.top) / r.height) * VH,
+      x: ((e.clientX - r.left) / w) * VW,
+      y: ((e.clientY - lift - r.top) / h) * VH,
     };
   }
 
   handlePointer(p: { x: number; y: number }) {
     this.hover = p;
     if (this.paused || this.sim.phase === "won" || this.sim.phase === "lost") return;
-    const sun = sunAt(this.sim, p.x, p.y);
-    if (sun) {
-      collectSun(this.sim, sun.id);
-      return;
-    }
     const si = seedHit(p.x, p.y, this.sim.seeds.length);
     if (si >= 0) {
       const id = this.sim.seeds[si]!;
@@ -175,13 +175,25 @@ export class Engine {
     }
     const col = colAt(p.x);
     const row = rowAt(p.y);
-    if (this.sim.selected && row >= 0 && col >= 0) {
+    if (this.sim.selected && row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+      const err = canPlant(this.sim, row, col, this.sim.selected);
+      if (err) {
+        const msg =
+          err === "占用" ? "已有植物" : err === "空地" ? "这里没有植物" : err === "界外" ? "点在草地上" : err;
+        float(this.sim, p.x, Math.max(p.y, 100), msg, "#e8b4a4");
+        return;
+      }
       const ok = tryPlant(this.sim, row, col, this.sim.selected);
       if (ok) {
         if (this.sim.selected === "shovel") this.audio.shovel();
         else this.audio.plant();
         if (this.sim.selected !== "shovel") this.sim.selected = null;
       }
+      return;
+    }
+    const sun = sunAt(this.sim, p.x, p.y);
+    if (sun) {
+      collectSun(this.sim, sun.id);
     }
   }
 
@@ -190,9 +202,26 @@ export class Engine {
       this.hover = this.world(e);
     };
     const onDown = (e: PointerEvent) => {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
       if (e.cancelable) e.preventDefault();
       this.audio.unlock();
+      try {
+        this.canvas.setPointerCapture(e.pointerId);
+      } catch {
+        /* older webviews */
+      }
+      this.press = { id: e.pointerId, cx: e.clientX, cy: e.clientY };
+    };
+    const onPointerUp = (e: PointerEvent) => {
+      if (!this.press || e.pointerId !== this.press.id) return;
+      const start = this.press;
+      this.press = null;
+      const dist = Math.hypot(e.clientX - start.cx, e.clientY - start.cy);
+      if (dist > 26) return;
       this.handlePointer(this.world(e));
+    };
+    const onCancel = () => {
+      this.press = null;
     };
     const onTouchMove = (e: TouchEvent) => {
       if (e.cancelable) e.preventDefault();
@@ -216,7 +245,7 @@ export class Engine {
       }
       this.keys.add(e.code);
     };
-    const onUp = (e: KeyboardEvent) => this.keys.delete(e.code);
+    const onKeyUp = (e: KeyboardEvent) => this.keys.delete(e.code);
     const onBlur = () => this.keys.clear();
     const onResize = () => this.fit();
     const onVis = () => {
@@ -224,10 +253,12 @@ export class Engine {
     };
     this.canvas.addEventListener("pointermove", onMove);
     this.canvas.addEventListener("pointerdown", onDown);
-    this.canvas.addEventListener("pointercancel", onMove);
+    this.canvas.addEventListener("pointerup", onPointerUp);
+    this.canvas.addEventListener("pointercancel", onCancel);
+    this.canvas.addEventListener("lostpointercapture", onCancel);
     this.canvas.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("keydown", onKey);
-    window.addEventListener("keyup", onUp);
+    window.addEventListener("keyup", onKeyUp);
     window.addEventListener("blur", onBlur);
     window.addEventListener("resize", onResize);
     window.addEventListener("orientationchange", onResize);
@@ -236,10 +267,12 @@ export class Engine {
     this.unsubs.push(() => {
       this.canvas.removeEventListener("pointermove", onMove);
       this.canvas.removeEventListener("pointerdown", onDown);
-      this.canvas.removeEventListener("pointercancel", onMove);
+      this.canvas.removeEventListener("pointerup", onPointerUp);
+      this.canvas.removeEventListener("pointercancel", onCancel);
+      this.canvas.removeEventListener("lostpointercapture", onCancel);
       this.canvas.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("keydown", onKey);
-      window.removeEventListener("keyup", onUp);
+      window.removeEventListener("keyup", onKeyUp);
       window.removeEventListener("blur", onBlur);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("orientationchange", onResize);
@@ -261,7 +294,10 @@ export class Engine {
     const parent = this.canvas.parentElement;
     if (!parent) return;
     const r = parent.getBoundingClientRect();
-    const scale = Math.min(r.width / VW, r.height / VH);
+    const vv = window.visualViewport;
+    const pw = Math.max(1, Math.min(r.width, vv?.width ?? r.width));
+    const ph = Math.max(1, Math.min(r.height, vv?.height ?? r.height));
+    const scale = Math.min(pw / VW, ph / VH);
     const w = Math.max(1, Math.floor(VW * scale));
     const h = Math.max(1, Math.floor(VH * scale));
     this.canvas.style.width = `${w}px`;

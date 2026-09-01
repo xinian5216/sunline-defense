@@ -40,7 +40,7 @@
 
   body {
     margin: 0;
-    overflow: hidden;
+    overflow: auto;
     min-height: 100dvh;
     background: var(--color-bg);
     color: var(--color-fg);
@@ -48,6 +48,15 @@
     -webkit-tap-highlight-color: transparent;
     -webkit-user-select: none;
     user-select: none;
+    touch-action: manipulation;
+  }
+
+  html.is-play,
+  html.is-play body {
+    overflow: hidden;
+    height: 100%;
+    height: 100dvh;
+    touch-action: none;
   }
 
   button:not(:disabled),

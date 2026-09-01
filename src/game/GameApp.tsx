@@ -54,7 +54,10 @@ export function GameApp() {
   };
 
   return (
-    <div className="relative min-h-dvh bg-bg text-fg" onPointerDown={unlockAudio}>
+    <div
+      className={`relative bg-bg text-fg ${screen === "play" ? "h-dvh overflow-hidden" : "min-h-dvh overflow-y-auto"}`}
+      onPointerDown={unlockAudio}
+    >
       {screen === "title" && (
         <Title
           save={save}
@@ -149,26 +152,26 @@ function Title({
   onSettings: () => void;
 }) {
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-5 py-10 pt-[max(2.5rem,env(safe-area-inset-top))] pb-[max(2.5rem,env(safe-area-inset-bottom))]">
+    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-y-auto overscroll-y-contain px-4 py-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] [@media(orientation:landscape)_and_(max-height:500px)]:justify-start">
       <img
         src={assetUrl("sprites/lawn_day.jpg")}
         alt=""
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
       />
       <div className="absolute inset-0 bg-gradient-to-b from-bg/70 via-bg/55 to-bg" />
-      <div className="relative z-10 flex w-full max-w-md flex-col items-center text-center">
-        <p className="text-sm tracking-[0.35em] text-muted">PIXEL GARDEN DEFENSE</p>
-        <h1 className="mt-3 whitespace-nowrap font-display text-4xl leading-none text-fg sm:text-7xl">阳光防线</h1>
-        <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted">
+      <div className="relative z-10 flex w-full max-w-md flex-col items-center py-2 text-center">
+        <p className="text-[11px] tracking-[0.35em] text-muted sm:text-sm">PIXEL GARDEN DEFENSE</p>
+        <h1 className="mt-2 font-display text-[clamp(2rem,12vh,4.5rem)] leading-none text-fg">阳光防线</h1>
+        <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted [@media(orientation:landscape)_and_(max-height:500px)]:hidden">
           种植十二种植物，挡住十二关行尸。点阳光、排阵型、守住前院与月夜。
         </p>
-        <div className="mt-8 flex w-full flex-col gap-3">
+        <div className="mt-5 flex w-full flex-col gap-2.5 sm:mt-8 sm:gap-3">
           <BigBtn onClick={onAdventure}>冒险模式</BigBtn>
           <BigBtn onClick={onSurvival} tone="ghost">
             生存模式
             {save.survivalBest > 0 ? ` · 最佳 ${save.survivalBest} 击杀` : ""}
           </BigBtn>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
             <BigBtn onClick={onAlmanac} tone="ghost">
               <BookOpen className="mr-2 inline size-4" />
               图鉴
@@ -179,10 +182,10 @@ function Title({
             </BigBtn>
           </div>
         </div>
-        <p className="mt-8 text-xs text-faint">
+        <p className="mt-5 text-xs text-faint sm:mt-8">
           进度保存在本机 · 已解锁 {save.unlocked + 1} / {LEVELS.length} 关
         </p>
-        <p className="mt-2 text-xs text-faint sm:hidden">手机请横屏游玩，点种子会更准</p>
+        <p className="mt-2 text-xs text-faint sm:hidden">横屏游玩更顺手 · 先点种子再点草地</p>
       </div>
     </div>
   );
@@ -198,10 +201,11 @@ function Adventure({
   onPick: (i: number) => void;
 }) {
   return (
-    <div className="mx-auto flex min-h-dvh max-w-3xl flex-col px-4 py-6">
+    <div className="mx-auto flex h-dvh max-h-dvh w-full max-w-3xl flex-col px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
       <TopBar title="冒险模式" onBack={onBack} />
-      <p className="mt-2 text-sm text-muted">沿路径推进。通关会解锁新植物与下一关。</p>
-      <div className="mt-6 grid gap-3 sm:grid-cols-2">
+      <p className="mt-2 shrink-0 text-sm text-muted">沿路径推进。通关会解锁新植物与下一关。</p>
+      <div className="mt-4 min-h-0 flex-1 overflow-y-auto overscroll-contain pb-8 [-webkit-overflow-scrolling:touch]">
+        <div className="grid gap-3 sm:grid-cols-2">
         {LEVELS.map((lv, i) => {
           const locked = i > save.unlocked;
           const done = save.completed.includes(String(i));
@@ -210,7 +214,7 @@ function Adventure({
               key={lv.id}
               disabled={locked}
               onClick={() => onPick(i)}
-              className="rounded-xl border border-border bg-surface p-4 text-left transition hover:bg-surface-2 disabled:opacity-40"
+              className="min-h-16 touch-manipulation rounded-xl border border-border bg-surface p-4 text-left transition hover:bg-surface-2 disabled:opacity-40"
             >
               <div className="flex items-baseline justify-between gap-2">
                 <span className="font-display text-xl">{lv.id}</span>
@@ -224,6 +228,7 @@ function Adventure({
             </button>
           );
         })}
+        </div>
       </div>
     </div>
   );
@@ -251,10 +256,11 @@ function PlantSelect({
     else if (seeds.length < 8) setSeeds([...seeds, id]);
   };
   return (
-    <div className="mx-auto flex min-h-dvh max-w-3xl flex-col px-4 py-6">
+    <div className="mx-auto flex h-dvh max-h-dvh w-full max-w-3xl flex-col px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
       <TopBar title={`${level.id}  ${level.name}`} onBack={onBack} />
-      <p className="mt-2 text-sm text-muted">{level.note}</p>
-      <p className="mt-4 text-xs tracking-wide text-faint">出战栏 · {seeds.length} / 8</p>
+      <p className="mt-2 shrink-0 text-sm text-muted">{level.note}</p>
+      <div className="mt-3 min-h-0 flex-1 overflow-y-auto overscroll-contain pb-4 [-webkit-overflow-scrolling:touch]">
+      <p className="text-xs tracking-wide text-faint">出战栏 · {seeds.length} / 8</p>
       <div className="mt-2 flex min-h-20 flex-wrap gap-2 rounded-xl border border-border bg-surface p-3">
         {seeds.map((id) => (
           <SeedCard key={id} id={id} onClick={() => toggle(id)} active />
@@ -266,10 +272,11 @@ function PlantSelect({
           <SeedCard key={id} id={id} onClick={() => toggle(id)} active={seeds.includes(id)} />
         ))}
       </div>
+      </div>
       <button
         disabled={seeds.length === 0}
         onClick={onStart}
-        className="mt-8 h-12 rounded-lg bg-primary text-base font-medium text-primary-fg disabled:opacity-40"
+        className="mt-3 h-12 shrink-0 touch-manipulation rounded-lg bg-primary text-base font-medium text-primary-fg disabled:opacity-40"
       >
         开始战斗
       </button>
@@ -319,7 +326,7 @@ function SeedCard({ id, onClick, active }: { id: PlantId; onClick: () => void; a
   return (
     <button
       onClick={onClick}
-      className={`flex flex-col items-center rounded-lg border p-2 transition ${
+      className={`flex min-h-16 touch-manipulation flex-col items-center rounded-lg border p-2 transition ${
         active ? "border-primary bg-surface-2" : "border-border bg-surface"
       }`}
     >
@@ -389,6 +396,11 @@ function Play({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [level, seeds, sprites, survival, idx]);
+
+  useEffect(() => {
+    document.documentElement.classList.add("is-play");
+    return () => document.documentElement.classList.remove("is-play");
+  }, []);
 
   return (
     <div className="relative flex min-h-dvh flex-col bg-bg">
@@ -462,7 +474,7 @@ function Almanac({
   const zombie = ZOMBIES[id as keyof typeof ZOMBIES];
   const entry = tab === "plant" ? plant : zombie;
   return (
-    <div className="mx-auto flex min-h-dvh max-w-3xl flex-col px-4 py-6">
+    <div className="mx-auto flex h-dvh max-h-dvh w-full max-w-3xl flex-col overflow-y-auto px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
       <TopBar title="图鉴" onBack={onBack} />
       <div className="mt-4 flex gap-2">
         <TabBtn active={tab === "plant"} onClick={() => { setTab("plant"); setId("sunflower"); }}>
@@ -533,7 +545,7 @@ function SettingsPane({
     audio.setSfx(next.settings.sfx);
   };
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 py-6">
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col overflow-y-auto px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
       <TopBar title="设置" onBack={onBack} />
       <label className="mt-8 text-sm text-muted">音乐</label>
       <input
@@ -609,8 +621,8 @@ function BigBtn({
       onClick={onClick}
       className={
         tone === "solid"
-          ? "flex h-12 items-center justify-center rounded-lg bg-primary px-4 text-base font-medium text-primary-fg transition hover:opacity-90"
-          : "flex h-12 items-center justify-center rounded-lg border border-border bg-surface px-4 text-base font-medium text-fg transition hover:bg-surface-2"
+          ? "flex h-12 min-h-12 touch-manipulation items-center justify-center rounded-lg bg-primary px-4 text-base font-medium text-primary-fg transition hover:opacity-90"
+          : "flex h-12 min-h-12 touch-manipulation items-center justify-center rounded-lg border border-border bg-surface px-4 text-base font-medium text-fg transition hover:bg-surface-2"
       }
     >
       {children}
